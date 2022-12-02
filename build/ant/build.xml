@@ -1,0 +1,54 @@
+<project name="Tic-Tac-Toe" basedir=".." default="run">
+
+    <property name="path.src" value="../src"></property>
+    <property name="path.ant" value="ant"></property>
+    <property name="path.jar" value="${path.ant}/tic-tac-toe.jar"></property>
+    <property name="path.export" value="ant/export"></property>
+    <property name="path.buildnumber" value="${path.ant}/build.number"></property>
+
+    <tstamp>
+        <format property="buildtime" pattern="yyyyMMdd-HHmmss"  locale="de,De" />
+    </tstamp>
+
+    <target name="compile">
+        <javac srcdir="${path.src}" />
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="${path.jar}" basedir="${path.src}" includes="**/*.class" />
+    </target>
+
+    <target name="run" depends="jar">
+        <java classname="Main" classpath="${path.jar}" fork="true" />
+    </target>
+
+    <target name="buildnumber">
+        <buildnumber file="${path.buildnumber}"/>
+    </target>
+
+    <target name="javadoc">
+        <javadoc sourcepath="${path.src}" destdir="${path.ant}/javadoc/"/>
+    </target>
+
+    <target name="export" depends="buildnumber, javadoc, jar">
+        <property name="export.name" value="${build.number}_${buildtime}"></property>
+
+        <echo message="create export for build ${build.number} (${buildtime}) in zip: ${path.export}/${export.name}.zip"/>
+
+        <!-- REDUNDANT, because move creates itself for you, if not available.
+        but works also with mkdir (e.g. you only want to create a dir) -->
+        <!--mkdir dir="${path.export}/${export.name}"/-->
+
+        <move file="${path.jar}" tofile="${path.export}/${export.name}/tic-tac-toe_b${build.number}.jar"/>
+        <!-- ALTERNATIVE: first copy then delete (same result as only execute move) -->
+        <!--copy file="${path.jar}" tofile="${path.export}/${export.dirname}/tic-tac-toe_b${build.number}.jar"/-->
+        <!--delete file="${path.jar}"/-->
+
+        <move file="${path.ant}/javadoc/" todir="${path.export}/${export.name}/docs"/>
+
+        <zip destfile="${path.export}/${export.name}.zip"
+             basedir="${path.export}/${export.name}"/>
+        <delete dir="${path.export}/${export.name}"></delete>
+    </target>
+
+</project>
