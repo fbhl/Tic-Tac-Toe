@@ -14,4 +14,4 @@ jobs:
           java-version: 11
           distribution: 'zulu'
     - name: Build with Gradle
-      run: ./gradlew build 
+      run: ./gradlew export 
