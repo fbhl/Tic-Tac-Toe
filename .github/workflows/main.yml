@@ -1,10 +1,15 @@
-name: Hello World on actions-branch-Push
-on: 
+name: Build Gradle project
+
+on:
   push:
-    branches:
-      - actions
+
 jobs:
-  build:
+  build-gradle-project:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Hello Github Actions"
+    - name: Checkout project sources
+      uses: actions/checkout@v2
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+    - name: Run build with Gradle Wrapper
+      run: ./gradlew build
